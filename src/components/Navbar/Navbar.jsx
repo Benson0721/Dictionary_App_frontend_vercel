@@ -194,9 +194,7 @@ function UserInterface({ user, isNight, logout, isMobile }) {
           <div className="Dictionary__navbar-interface__menu-box__item">
             <form
               onSubmit={(event) => {
-                if (
-                  !confirm("Please confirm you want to delete this record.")
-                ) {
+                if (!confirm("Are you sure you want to logout?")) {
                   event.preventDefault();
                 } else {
                   event.preventDefault();

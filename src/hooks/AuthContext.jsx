@@ -1,6 +1,4 @@
 import { createContext, useEffect, useState } from "react";
-import { useContext } from "react";
-import FavoriteListsContext from "./FavoriteListsContext";
 import localforage from "localforage";
 import axios from "axios";
 

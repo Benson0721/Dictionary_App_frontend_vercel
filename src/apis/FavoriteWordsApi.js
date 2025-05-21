@@ -1,5 +1,5 @@
 import axios from "axios";
-const baseURL = window.location.origin;
+const baseURL = process.env.NODE_ENV === "production" ? import.meta.env.VITE_API_URL : window.location.origin;
 
 export const getFavoriteWords = async (userID, listID) => {
   try {
