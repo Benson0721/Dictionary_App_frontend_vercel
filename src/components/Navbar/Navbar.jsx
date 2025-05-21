@@ -118,7 +118,6 @@ function VistorInterface({ isMobile, isNight }) {
 
 function UserInterface({ user, isNight, logoutHandler, isMobile }) {
   const navigate = useNavigate();
-  //const [isLoading, setIsLoading] = useState(true);
   const [toggle, setToggle] = useState(false);
 
   const handleLogout = async () => {
@@ -403,7 +402,7 @@ export default function Navbar() {
             <UserInterface
               user={user}
               isNight={isNight}
-              logout={logoutHandler}
+              logoutHandler={logoutHandler}
               isMobile={isMobile}
             />
           ) : (

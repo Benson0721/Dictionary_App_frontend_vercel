@@ -9,7 +9,7 @@ const AuthContext = createContext({
   checkSession: async () => {},
   setIsLoggedIn: () => {},
   setUser: () => {},
-  logout: () => {},
+  logoutHandler: () => {},
 });
 
 export const AuthProvider = ({ children }) => {
@@ -56,7 +56,14 @@ export const AuthProvider = ({ children }) => {
 
   return (
     <AuthContext.Provider
-      value={{ isLoggedIn, user, setUser, logout, setIsLoggedIn, checkSession }}
+      value={{
+        isLoggedIn,
+        user,
+        setUser,
+        logoutHandler,
+        setIsLoggedIn,
+        checkSession,
+      }}
     >
       {children}
     </AuthContext.Provider>
