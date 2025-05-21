@@ -36,3 +36,17 @@ export async function signUp(userData) {
     return { error: e.response?.data?.error || "註冊錯誤，請重新操作" };
   }
 }
+
+export async function checkAuth() {
+  const res = await axios.get(`${baseURL}/api/checkAuth`, {
+    withCredentials: true, // 讓瀏覽器傳送 Cookie
+  });
+  return res.data;
+}
+
+export async function logout() {
+  const res = await axios.get(`${baseURL}/api/logout`, {
+    withCredentials: true, // 讓瀏覽器傳送 Cookie
+  });
+  return res.data;
+}

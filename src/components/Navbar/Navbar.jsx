@@ -116,13 +116,13 @@ function VistorInterface({ isMobile, isNight }) {
   );
 }
 
-function UserInterface({ user, isNight, logout, isMobile }) {
+function UserInterface({ user, isNight, logoutHandler, isMobile }) {
   const navigate = useNavigate();
   //const [isLoading, setIsLoading] = useState(true);
   const [toggle, setToggle] = useState(false);
 
   const handleLogout = async () => {
-    await logout();
+    await logoutHandler();
     navigate("/dictionary");
   };
   const menuRef = useRef(null);
@@ -279,7 +279,7 @@ function Settings({ isNight, setFont, font, isMobile }) {
   );
 }
 export default function Navbar() {
-  const { isLoggedIn, user, logout } = useContext(AuthContext);
+  const { isLoggedIn, user, logoutHandler } = useContext(AuthContext);
   const { isNight } = useContext(ThemeContext);
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
   const [isOpen, setIsOpen] = useState(false);
@@ -403,7 +403,7 @@ export default function Navbar() {
             <UserInterface
               user={user}
               isNight={isNight}
-              logout={logout}
+              logout={logoutHandler}
               isMobile={isMobile}
             />
           ) : (

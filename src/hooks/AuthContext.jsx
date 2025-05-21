@@ -1,8 +1,7 @@
 import { createContext, useEffect, useState } from "react";
 import localforage from "localforage";
-import axios from "axios";
 
-const baseURL = window.location.origin;
+import { checkAuth, logout } from "../apis/UserApi";
 
 const AuthContext = createContext({
   isLoggedIn: false,
@@ -21,27 +20,23 @@ export const AuthProvider = ({ children }) => {
     checkSession();
   }, []);
 
-  const logout = async () => {
+  const logoutHandler = async () => {
     await localforage.removeItem("user", () => {
-        console.log("user removed");
+      console.log("user removed");
     });
-    await axios.get(`${baseURL}/api/logout`, {
-      withCredentials: true,
-    });
+    await logout();
     setUser(null);
     setIsLoggedIn(false);
   };
 
   const checkSession = async () => {
     try {
-      const res = await axios.get(`${baseURL}/api/checkAuth`, {
-        withCredentials: true, // 讓瀏覽器傳送 Cookie
-      });
+      const res = await checkAuth();
 
-      if (res.data.isAuthenticated) {
+      if (res.isAuthenticated) {
         const newUser = {
-          id: res.data.user._id,
-          username: res.data.user.username,
+          id: res.user._id,
+          username: res.user.username,
         };
         await localforage.setItem("user", newUser);
         setUser(newUser);
