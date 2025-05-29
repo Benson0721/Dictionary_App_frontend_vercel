@@ -5,8 +5,8 @@ import { searchRule } from "../../utils/Rules.js";
 import DictionaryContext from "../../hooks/DictionaryContext.jsx";
 import ThemeContext from "../../hooks/ThemeContext.jsx";
 import { fetchWordData } from "../../apis/fetchWordData.js";
-import { useContext, useEffect } from "react";
-import "./Search.css";
+import { useContext, useEffect, useCallback } from "react";
+import "./Search.scss";
 
 export default function Search({ setIsSuccess, currentSearch, handleSearch }) {
   const {
@@ -19,20 +19,19 @@ export default function Search({ setIsSuccess, currentSearch, handleSearch }) {
 
   const { word, WordHandler } = useContext(DictionaryContext);
   const { isNight } = useContext(ThemeContext);
-  
-  const onSubmit = async () => {
-    const word = watch("word");
-    await fetchWordData(word)
-      .then((data) => {
-        WordHandler(data);
-        handleSearch(word);
-        setIsSuccess(true);
-      })
-      .catch((error) => {
-        console.error(error);
-        setIsSuccess(false);
-      });
-  };
+
+  const onSubmit = useCallback(async () => {
+    try {
+      const word = watch("word");
+      const data = await fetchWordData(word);
+      WordHandler(data);
+      handleSearch(word);
+      setIsSuccess(true);
+    } catch (error) {
+      console.error(error);
+      setIsSuccess(false);
+    }
+  }, [watch, WordHandler, handleSearch, setIsSuccess]);
 
   useEffect(() => {
     setValue("word", currentSearch);

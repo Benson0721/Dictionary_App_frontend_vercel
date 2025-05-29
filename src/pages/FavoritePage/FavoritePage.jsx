@@ -1,51 +1,67 @@
-import { useContext, useEffect, useRef, useState } from "react";
+import {
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+  useMemo,
+  useCallback,
+  Fragment,
+} from "react";
 import FavoriteListsContext from "../../hooks/FavoriteListsContext";
 import FavoriteWordsContext from "../../hooks/FavoriteWordsContext";
-import "./FavoritePage.css";
+import "./FavoritePage.scss";
 import * as Icons from "@mui/icons-material";
 import AudioPlayer from "../../components/AudioPlayer/AudioPlayer";
 import Navbar from "../../components/Navbar/Navbar";
 import Drawer from "@mui/material/Drawer";
 import List from "@mui/material/List";
-import Divider from "@mui/material/Divider";
 import ListItem from "@mui/material/ListItem";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
-import AuthContext from "../../hooks/AuthContext";
 import ThemeContext from "../../hooks/ThemeContext";
-import avatar from "../../assets/images/emojinoko.jpg";
 import { FavWordHeading } from "../../components/Headings";
 import { useMediaQuery } from "@mui/material";
-const ListDrawer = ({ isOpen, setIsOpen, user,font }) => {
-  const { lists, fetchLists, setCurrentList,setLists } =
-    useContext(FavoriteListsContext);
+const ListDrawer = ({ isOpen, setIsOpen, font }) => {
+  const { lists, setCurrentList } = useContext(FavoriteListsContext);
 
   const { isNight } = useContext(ThemeContext);
   const menuRef = useRef(null);
   const [isLoading, setIsLoading] = useState(false);
   const isMobile = useMediaQuery("(max-width: 767px)");
   const drawerWidth = 240;
-  const leftDrawerStyle = {
-    width: drawerWidth,
-    top: "123px",
-    height: "calc(100% - 123px)", // 讓 sidebar 從 navbar 底下開始
-    boxSizing: "border-box",
-    position: "absolute",
-    left: 0,
-    color: isNight ? "white" : "#2d2d2d",
-    backgroundColor: isNight ? "#2d2d2d" : "white",
-    transition: "background-color 0.3s ease-in-out, color 0.3s ease-in-out",
-  };
-  const bottomDrawerStyle = {
-    width: "100%", // 讓 sidebar 從 navbar 底下開始
-    boxSizing: "border-box",
-    left: 0,
-    height: "300px",
-    color: isNight ? "white" : "#2d2d2d",
-    backgroundColor: isNight ? "#2d2d2d" : "white",
-    transition: "background-color 0.3s ease-in-out, color 0.3s ease-in-out",
-  };
+  const leftDrawerStyle = useMemo(() => {
+    return {
+      width: drawerWidth,
+      top: "123px",
+      height: "calc(100% - 123px)", // 讓 sidebar 從 navbar 底下開始
+      boxSizing: "border-box",
+      position: "absolute",
+      left: 0,
+      color: isNight ? "white" : "#2d2d2d",
+      backgroundColor: isNight ? "#2d2d2d" : "white",
+      transition: "background-color 0.3s ease-in-out, color 0.3s ease-in-out",
+    };
+  }, [isNight]);
+  const bottomDrawerStyle = useMemo(() => {
+    return {
+      width: "100%", // 讓 sidebar 從 navbar 底下開始
+      boxSizing: "border-box",
+      left: 0,
+      height: "300px",
+      color: isNight ? "white" : "#2d2d2d",
+      backgroundColor: isNight ? "#2d2d2d" : "white",
+      transition: "background-color 0.3s ease-in-out, color 0.3s ease-in-out",
+    };
+  }, [isNight]);
+
+  const handleClick = useCallback(
+    (list) => {
+      setCurrentList(() => ({ id: list._id, name: list.name }));
+      setIsOpen(false);
+    },
+    [setCurrentList, setIsOpen]
+  );
 
   useEffect(() => {
     const handleLoading = () => {
@@ -55,7 +71,7 @@ const ListDrawer = ({ isOpen, setIsOpen, user,font }) => {
     };
 
     handleLoading();
-  }, [lists, fetchLists,setLists]);
+  }, [lists]);
 
   return (
     <Drawer
@@ -70,7 +86,7 @@ const ListDrawer = ({ isOpen, setIsOpen, user,font }) => {
       onClose={() => setIsOpen(false)}
       ref={menuRef}
     >
-     <hr />
+      <hr />
       <List>
         {isLoading ? (
           <div>Loading...</div>
@@ -79,12 +95,7 @@ const ListDrawer = ({ isOpen, setIsOpen, user,font }) => {
             const Icon = Icons[list.icon];
             return (
               <ListItem key={list._id} disablePadding>
-                <ListItemButton
-                  onClick={() => {
-                    setCurrentList(() => ({ id: list._id, name: list.name }));
-                    setIsOpen(false);
-                  }}
-                >
+                <ListItemButton onClick={() => handleClick(list)}>
                   <ListItemIcon>
                     <Icon sx={{ color: isNight ? "white" : "#2d2d2d" }} />
                   </ListItemIcon>
@@ -95,19 +106,17 @@ const ListDrawer = ({ isOpen, setIsOpen, user,font }) => {
           })
         )}
       </List>
-   
     </Drawer>
   );
 };
 
 export default function FavoritePage() {
   const { currentList, setCurrentList } = useContext(FavoriteListsContext);
-  const { currentFavWords, removeFavWord, fetchCurrentFavWords,setCurrentFavWords } =
+  const { currentFavWords, removeFavWord, fetchCurrentFavWords } =
     useContext(FavoriteWordsContext);
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 767);
   const [isOpen, setIsOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
-  const { user } = useContext(AuthContext);
   const { font, isNight } = useContext(ThemeContext);
 
   useEffect(() => {
@@ -118,7 +127,7 @@ export default function FavoritePage() {
     };
 
     handleLoading();
-  }, [currentFavWords, removeFavWord,setCurrentFavWords]);
+  }, [currentFavWords]);
 
   useEffect(() => {
     const handleResize = () => {
@@ -131,7 +140,7 @@ export default function FavoritePage() {
     return () => {
       window.removeEventListener("resize", handleResize);
     };
-  }, [user]);
+  }, []);
 
   useEffect(() => {
     const handleFetch = async () => {
@@ -156,7 +165,6 @@ export default function FavoritePage() {
             isMobile={isMobile}
             isOpen={isOpen}
             setIsOpen={setIsOpen}
-            user={user}
             font={font}
           />
           <div className="Dictionary__favoritePage__main">
@@ -180,17 +188,14 @@ export default function FavoritePage() {
                 </h1>
               </>
             )}
-           <hr className="mt-3"/>
+            <hr className="mt-3" />
             <ul className="Dictionary__favoritePage__list">
               {isLoading ? (
                 <></>
               ) : (
                 currentFavWords.map((favWord) => (
-                  <>
-                    <li
-                      key={favWord._id}
-                      className="Dictionary__favoritePage__list__item"
-                    >
+                  <Fragment key={favWord._id}>
+                    <li className="Dictionary__favoritePage__list__item">
                       <AudioPlayer audioSrc={favWord.audio} />
                       <FavWordHeading word={favWord.word} {...favWord} />
                       <Icons.Delete
@@ -206,7 +211,7 @@ export default function FavoritePage() {
                       />
                     </li>
                     <hr />
-                  </>
+                  </Fragment>
                 ))
               )}
             </ul>

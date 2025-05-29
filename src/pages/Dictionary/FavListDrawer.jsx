@@ -1,4 +1,4 @@
-import { useEffect, useState, useContext } from "react";
+import { useEffect, useState, useContext, useCallback, useMemo } from "react";
 import * as Icons from "@mui/icons-material";
 import {
   Box,
@@ -27,76 +27,93 @@ import { pink } from "@mui/material/colors";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 
 export default function FavListDrawer({ openDrawer, setOpenDrawer }) {
-  const [inputList, setInputList] = useState(""); // 輸入框的值
+  const [inputList, setInputList] = useState("");
   const [mode, setMode] = useState(null);
-  const [selectedIcon, setSelectedIcon] = useState(null); // 選擇的 icon
+  const [selectedIcon, setSelectedIcon] = useState(null);
   const [openDialog, setOpenDialog] = useState(false);
-  const { lists, setLists, addLists, updateLists, deleteLists } =
-    useContext(FavoriteListsContext);
-  const theme = useTheme(); // 取得 MUI 主題
-  const isMobile = useMediaQuery(theme.breakpoints.down("sm")); // 判斷是否為手機
-  const Icon = Icons[selectedIcon];
   const [selectedListID, setSelectedListID] = useState(null);
   const [curWord, setCurWord] = useState(null);
   const [curWordList, setCurWordList] = useState([]);
+
+  const { lists, setLists, addLists, updateLists, deleteLists } =
+    useContext(FavoriteListsContext);
   const { addFavWord, allFavoriteWords, setIsFav } =
     useContext(FavoriteWordsContext);
   const { word } = useContext(DictionaryContext);
+
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+  const Icon = useMemo(() => Icons[selectedIcon], [selectedIcon]);
+
   const { vocabulary, phonetics, meanings } = word;
 
-  useEffect(() => {
+  const curWordData = useMemo(() => {
     if (word.vocabulary && word.meanings) {
-      const curWordData = {
+      return {
         word: vocabulary,
         phonetic: phonetics?.text,
         audio: phonetics?.audio,
         meaning: meanings[0]?.definitions[0]?.definition,
       };
+    }
+    return null;
+  }, [vocabulary, phonetics, meanings]);
 
+  useEffect(() => {
+    if (curWordData) {
       setCurWord(curWordData);
-      setIsFav(() =>
-        allFavoriteWords?.some((fav) => fav.word === word.vocabulary)
-          ? true
-          : false
+      const isWordFavorited = allFavoriteWords?.some(
+        (fav) => fav.word === word.vocabulary
       );
+      setIsFav(isWordFavorited);
+
       const foundFav = allFavoriteWords?.find(
         (fav) => fav.word === word.vocabulary
       );
-      if (foundFav) {
-        setCurWordList(foundFav.favoriteLists);
-      } else {
-        setCurWordList([]);
-      }
+      setCurWordList(foundFav?.favoriteLists || []);
     }
-  }, [word, allFavoriteWords]);
+  }, [curWordData, word.vocabulary, allFavoriteWords]);
 
-  const handleCreate = async (name, icon) => {
+  const resetForm = useCallback(() => {
     setInputList("");
     setMode(null);
     setSelectedIcon(null);
-    await addLists({ name, icon });
-  };
-  const handleEdit = async (updatedLists) => {
-    setInputList("");
-    setMode(null);
-    setSelectedIcon(null);
-    await updateLists(updatedLists);
+  }, []);
 
-};
+  const handleCreate = useCallback(
+    async (name, icon) => {
+      await addLists({ name, icon });
+      resetForm();
+    },
+    [addLists, resetForm]
+  );
 
-  const handleCancel = () => {
-    setMode(null);
-    setInputList("");
-    setSelectedIcon(null);
-  };
-  const handleDelete = async (id) => {
-    await deleteLists(id);
-  };
+  const handleEdit = useCallback(
+    async (updatedLists) => {
+      await updateLists(updatedLists);
+      resetForm();
+    },
+    [updateLists, resetForm]
+  );
 
-  const heartStyle = {
-    color: pink[500],
-    fontSize: 20,
-  };
+  const handleCancel = useCallback(() => {
+    resetForm();
+  }, [resetForm]);
+
+  const handleDelete = useCallback(
+    async (id) => {
+      await deleteLists(id);
+    },
+    [deleteLists]
+  );
+
+  const heartStyle = useMemo(
+    () => ({
+      color: pink[500],
+      fontSize: 20,
+    }),
+    []
+  );
 
   const DrawerList = (
     <Box
@@ -131,7 +148,9 @@ export default function FavListDrawer({ openDrawer, setOpenDrawer }) {
                   onChange={(e) =>
                     setLists((prevLists) =>
                       prevLists.map((item) =>
-                        item._id === list._id ? { ...item, name: e.target.value } : item
+                        item._id === list._id
+                          ? { ...item, name: e.target.value }
+                          : item
                       )
                     )
                   }
@@ -148,9 +167,7 @@ export default function FavListDrawer({ openDrawer, setOpenDrawer }) {
             </ListItem>
           ) : (
             <ListItem key={list._id} disablePadding>
-              <ListItemButton
-                onClick={() => addFavWord(list._id, curWord)}
-              >
+              <ListItemButton onClick={() => addFavWord(list._id, curWord)}>
                 <ListItemIcon>
                   <Icon />
                 </ListItemIcon>

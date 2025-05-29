@@ -1,6 +1,6 @@
 import * as React from "react";
 import * as Icons from "@mui/icons-material";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo, useCallback } from "react";
 import {
   Button,
   Box,
@@ -11,8 +11,6 @@ import {
   ToggleButton,
 } from "@mui/material";
 import Grid from "@mui/material/Grid2";
-
-
 
 export default function IconsDialog({
   openDialog,
@@ -36,10 +34,22 @@ export default function IconsDialog({
     );
   }, [searchIcon]);
 
-  const handleClose = () => {
+  const handleClose = useCallback(() => {
     setSearchIcon(null);
     setOpenDialog(false);
-  };
+  }, []);
+
+  const handleClick = useCallback(
+    (iconName) => {
+      setSelectedIcon(iconName);
+      setLists((prevLists) =>
+        prevLists.map((item) =>
+          item._id === selectedListID ? { ...item, icon: iconName } : item
+        )
+      );
+    },
+    [selectedListID, setLists]
+  );
 
   return (
     <React.Fragment>
@@ -107,16 +117,7 @@ export default function IconsDialog({
               >
                 <ToggleButton
                   value={iconName}
-                  onClick={() => {
-                    setSelectedIcon(iconName);
-                    setLists((prevLists) =>
-                      prevLists.map((item) =>
-                        item._id === selectedListID
-                          ? { ...item, icon: iconName }
-                          : item
-                      )
-                    );
-                  }}
+                  onClick={() => handleClick(iconName)}
                   selected={iconName === selectedIcon}
                 >
                   <Icon />
@@ -135,4 +136,3 @@ export default function IconsDialog({
     </React.Fragment>
   );
 }
-

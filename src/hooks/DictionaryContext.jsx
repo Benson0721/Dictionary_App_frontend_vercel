@@ -1,4 +1,4 @@
-import { createContext, useState } from "react";
+import { createContext, useState ,useMemo} from "react";
 
 const DictionaryContext = createContext({
   word: {},
@@ -10,7 +10,6 @@ export const DictionaryContentProvider = (props) => {
 
   const WordHandler = (word) => {
     const { phonetics } = word;
-
     const { text: phoneticText } =
       phonetics
         .filter(
@@ -31,10 +30,16 @@ export const DictionaryContentProvider = (props) => {
     setWord(wordData);
   };
 
+  const contextValue = useMemo(
+    () => ({
+      word,
+      WordHandler,
+    }),
+    [word]
+  );
+
   return (
-    <DictionaryContext.Provider
-      value={{ word: word, WordHandler: WordHandler }}
-    >
+    <DictionaryContext.Provider value={contextValue}>
       {props.children}
     </DictionaryContext.Provider>
   );

@@ -3,7 +3,7 @@ import ThemeContext from "../hooks/ThemeContext";
 import newWindow from "../assets/icons/icon-new-window.svg";
 
 
-export function BodyM({ data, listStyle }) {
+export function TextM({ data, listStyle }) {
 
   const { isNight } = useContext(ThemeContext);
   const { definition, example } = data;
@@ -23,7 +23,7 @@ export function BodyM({ data, listStyle }) {
     </li>
   );
 }
-export function BodyM_Gray({ data }) {
+export function TextM_Gray({ data }) {
 
   const { isNight } = useContext(ThemeContext);
   return (
@@ -37,7 +37,7 @@ export function BodyM_Gray({ data }) {
   );
 }
 
-export function BodyS({ data }) {
+export function TextS({ data }) {
 
   const { isNight } = useContext(ThemeContext);
   return (
@@ -50,7 +50,7 @@ export function BodyS({ data }) {
     </p>
   );
 }
-export function BodyS_a({ data }) {
+export function TextS_a({ data }) {
 
   const { isNight } = useContext(ThemeContext);
   return (

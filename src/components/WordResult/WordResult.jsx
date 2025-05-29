@@ -1,6 +1,6 @@
 import { HeadingM, HeadingS, HeadingS_a } from "../Headings";
-import { BodyM, BodyM_Gray } from "../Bodys";
-import "./WordResult.css";
+import { TextM, TextM_Gray } from "../Texts";
+import "./WordResult.scss";
 
 export function ScuccessData({ data, searchByClick }) {
   const { partOfSpeech, definitions, synonyms, antonyms } = data;
@@ -14,7 +14,7 @@ export function ScuccessData({ data, searchByClick }) {
         <HeadingS data="Meanings" />
         <ul className="pl-4">
           {definitions.map((definition, index) => (
-            <BodyM data={definition} key={index} listStyle={"list-disc"} />
+            <TextM data={definition} key={index} listStyle={"list-disc"} />
           ))}
         </ul>
         {synonyms && synonyms.length > 0 ? (
@@ -88,7 +88,7 @@ export function FailureData() {
       <h1 className="text-[16px] md:text-[20px] text-Black-3">
         No Definitions Found
       </h1>
-      <BodyM_Gray
+      <TextM_Gray
         data={
           "Sorry pal, we couldn't find definitions for the word you were looking for. You can try the search again at later time or head to the web instead."
         }

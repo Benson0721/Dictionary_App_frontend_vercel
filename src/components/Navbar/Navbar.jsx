@@ -7,7 +7,10 @@ import { Link, useNavigate, useLocation } from "react-router";
 import logo from "../../assets/icons/logo.svg";
 import moon from "../../assets/icons/icon-moon.svg";
 import selectToggle from "../../assets/icons/selector.svg";
-import "./Navbar.css";
+import SettingsIcon from "@mui/icons-material/Settings";
+import LogoutIcon from "@mui/icons-material/Logout";
+import IconButton from "@mui/material/IconButton";
+import "./Navbar.scss";
 
 function DayNightToggle() {
   const { isNight, setIsNight } = useContext(ThemeContext);
@@ -116,56 +119,28 @@ function VistorInterface({ isMobile, isNight }) {
   );
 }
 
-function UserInterface({ user, isNight, logoutHandler, isMobile }) {
+function UserInterface({ user, logoutHandler, isMobile }) {
   const navigate = useNavigate();
-  const [toggle, setToggle] = useState(false);
 
   const handleLogout = async () => {
     await logoutHandler();
     navigate("/dictionary");
   };
-  const menuRef = useRef(null);
-
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (menuRef.current && !menuRef.current.contains(event.target)) {
-        setToggle(false);
-      }
-    };
-
-    if (toggle) {
-      document.addEventListener("mousedown", handleClickOutside);
-    }
-
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, [toggle]);
 
   return (
-    <div className={`Dictionary__navbar-interface`} ref={menuRef}>
+    <div className={`Dictionary__navbar-interface`}>
       {!isMobile && (
-        <div
-          className={`Dictionary__navbar-interface__user `}
-          onClick={() => setToggle(!toggle)}
-        >
+        <div className={`Dictionary__navbar-interface__user `}>
           <img
             className="Dictionary__navbar-interface__avatar"
             src={avatar}
             alt="avatar"
           />
           <span className="mt-1">{user.username}</span>
-          <img
-            src={selectToggle}
-            alt="toggler"
-            className={`Dictionary__navbar-interface__toggler  ${
-              toggle && "rotate-180"
-            }`}
-          />
         </div>
       )}
 
-      {isMobile ? (
+      {isMobile && (
         <div className="Dictionary__navbar__space__item">
           <form
             onSubmit={(event) => {
@@ -180,31 +155,6 @@ function UserInterface({ user, isNight, logoutHandler, isMobile }) {
             <button type="submit">Logout</button>
           </form>
         </div>
-      ) : (
-        <nav
-          className={`${
-            toggle
-              ? "Dictionary__navbar-interface__menu--open"
-              : "Dictionary__navbar-interface__menu--close"
-          } ${
-            isNight ? "bg-Black-1 text-white" : "bg-white text-Black-3"
-          }  Dictionary__navbar-interface__menu-box`}
-        >
-          <div className="Dictionary__navbar-interface__menu-box__item">
-            <form
-              onSubmit={(event) => {
-                if (!confirm("Are you sure you want to logout?")) {
-                  event.preventDefault();
-                } else {
-                  event.preventDefault();
-                  handleLogout();
-                }
-              }}
-            >
-              <button type="submit">Logout</button>
-            </form>
-          </div>
-        </nav>
       )}
     </div>
   );
@@ -243,19 +193,10 @@ function Settings({ isNight, setFont, font, isMobile }) {
         </div>
       ) : (
         <div className={`Dictionary__navbar-settings `} ref={menuRef}>
-          <div
-            className={`Dictionary__navbar-settings__name `}
-            onClick={() => setToggle(!toggle)}
-          >
-            Settings
-            <img
-              src={selectToggle}
-              alt="toggler"
-              className={`Dictionary__navbar-settings__toggler  ${
-                toggle && "rotate-180"
-              }`}
-            />
-          </div>
+          <IconButton onClick={() => setToggle(!toggle)}>
+            <SettingsIcon />
+          </IconButton>
+
           <nav
             className={`${
               toggle
@@ -311,13 +252,11 @@ export default function Navbar() {
         return [
           { to: "/", text: "Home" },
           { to: "/dictionary", text: "Dictionary" },
-          { to: `/${user?.id}/favorites`, text: "Favorites" },
         ];
       case "/register":
         return [
           { to: "/", text: "Home" },
           { to: "/dictionary", text: "Dictionary" },
-          { to: `/${user?.id}/favorites`, text: "Favorites" },
         ];
 
       default:
@@ -391,13 +330,7 @@ export default function Navbar() {
             <Link to={`${item.to}`}>{item.text}</Link>
           </div>
         ))}
-        {location.pathname !== "/register" &&
-          location.pathname !== "/login" && (
-            <div className="Dictionary__navbar__space__item">
-              <Settings isNight={isNight} isMobile={isMobile} />
-            </div>
-          )}
-        <div className="Dictionary__navbar__space__item ">
+        <div className="Dictionary__navbar__space__item Dictionary__navbar__space__item--flex">
           {isLoggedIn ? (
             <UserInterface
               user={user}
@@ -408,6 +341,34 @@ export default function Navbar() {
           ) : (
             <VistorInterface isMobile={isMobile} isNight={isNight} />
           )}
+          <div className="flex items-center">
+            {location.pathname !== "/register" &&
+              location.pathname !== "/login" && (
+                <div className="Dictionary__navbar__space__icon">
+                  <Settings isNight={isNight} isMobile={isMobile} />
+                </div>
+              )}
+            <div
+              className={`Dictionary__navbar__space__icon ${
+                isMobile ? "hidden" : ""
+              }`}
+            >
+              <form
+                onSubmit={(event) => {
+                  if (!confirm("Are you sure you want to logout?")) {
+                    event.preventDefault();
+                  } else {
+                    event.preventDefault();
+                    handleLogout();
+                  }
+                }}
+              >
+                <IconButton type="submit">
+                  <LogoutIcon />
+                </IconButton>
+              </form>
+            </div>
+          </div>
         </div>
       </div>
     </nav>

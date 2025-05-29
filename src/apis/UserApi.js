@@ -46,6 +46,6 @@ export async function checkAuth() {
 
 export async function logout() {
   await axios.get(`${baseURL}/api/logout`, {
-    withCredentials: true, // 讓瀏覽器傳送 Cookie
+    withCredentials: true, 
   });
 }

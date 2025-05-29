@@ -52,11 +52,8 @@ export const FavoriteWordsContextProvider = (props) => {
   };
   const addFavWord = async (listID, newWord) => {
     const user = await localforage.getItem("user");
-
     if (user) {
       try {
-
-
         await addFavoriteWord(user.id, listID, newWord);
         await fetchAllFavWords();
       } catch (e) {
@@ -86,7 +83,6 @@ export const FavoriteWordsContextProvider = (props) => {
     const handleAllWords = async () => {
       await fetchAllFavWords();
     };
-
     if (user) {
       handleAllWords();
     }

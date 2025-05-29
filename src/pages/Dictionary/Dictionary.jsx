@@ -1,9 +1,9 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useState, useCallback, useMemo } from "react";
 import Navbar from "../../../src/components/Navbar/Navbar.jsx";
 import Search from "../../../src/components/Search/Search.jsx";
 import FavListDrawer from "./FavListDrawer.jsx";
 import { WordCard } from "../../../src/components/Headings.jsx";
-import { BodyS, BodyS_a } from "../../../src/components/Bodys.jsx";
+import { TextS, TextS_a } from "../../../src/components/Texts.jsx";
 import {
   ScuccessData,
   FailureData,
@@ -13,25 +13,25 @@ import ThemeContext from "../../hooks/ThemeContext.jsx";
 import AudioPlayer from "../../../src/components/AudioPlayer/AudioPlayer.jsx";
 import { fetchWordData } from "../../apis/fetchWordData.js";
 import WordHistory from "../../../src/components/WordHistory.jsx";
-import AuthContext from "../../hooks/AuthContext.jsx";
 
-import "./Dictionary.css";
+import "./Dictionary.scss";
 
 export default function Dictionary() {
-  const { word, WordHandler } = useContext(DictionaryContext); //get word and handler by using useContent
+  const { word, WordHandler } = useContext(DictionaryContext);
   const { isNight, font } = useContext(ThemeContext);
-  const { user } = useContext(AuthContext);
-  const [phoneticData, setPhoneticData] = useState(null); //extract data form word
-  const [meaningsData, setMeaningsData] = useState(null); //extract data form word
-  const [isLoading, setIsLoading] = useState(true); //waiting data fetch
-  const [isSuccess, setIsSuccess] = useState(false); //is fetch success or not
+
+  const [isLoading, setIsLoading] = useState(true);
+  const [isSuccess, setIsSuccess] = useState(false);
   const [openDrawer, setOpenDrawer] = useState(false);
-  const [currentSearch, setCurrentSearch] = useState(""); //is fetch success or not
+  const [currentSearch, setCurrentSearch] = useState("");
   const [history, setHistory] = useState([]);
   const { vocabulary, phonetics, meanings, sourceUrls } = word;
 
+  const phoneticData = useMemo(() => phonetics || null, [word]);
+  const meaningsData = useMemo(() => meanings || null, [word]);
+
   useEffect(() => {
-    async function welcome() {
+    async function loadInitialWord() {
       //welcome to our users
       try {
         const data = await fetchWordData("welcome");
@@ -39,49 +39,44 @@ export default function Dictionary() {
         setCurrentSearch("welcome");
         setIsSuccess(true);
       } catch (error) {
-        console.error(error);
+        console.error("Fail to load initial word:", error);
         setIsSuccess(false);
       }
     }
-    welcome();
+    loadInitialWord();
   }, []);
 
   useEffect(() => {
     //processing word data
     if (Object.keys(word).length > 0) {
-      setPhoneticData(phonetics);
-      setMeaningsData(meanings);
       setIsLoading(false);
     }
-  }, [word, WordHandler, user]);
+  }, [word]);
 
-  const handleSearch = (newWord) => {
+  const handleSearch = useCallback((newWord) => {
     setCurrentSearch(newWord);
     setHistory((prevHistory) => {
-      const newHistory = [newWord, ...prevHistory];
-      if (prevHistory.includes(newWord)) {
-        const newprev = prevHistory.filter((word) => word != newWord);
-        const newHistory = [newWord, ...newprev];
-        return newHistory.slice(0, 5);
-      } else {
-        return newHistory.slice(0, 5);
-      }
+      const filteredHistory = prevHistory.filter((word) => word !== newWord);
+      return [newWord, ...filteredHistory].slice(0, 5);
     });
-  };
+  }, []);
 
-  const searchByClick = async (Word) => {
-    //search by click synonyms or antonyms
-    await fetchWordData(Word)
-      .then((data) => {
-        WordHandler(data);
-        setCurrentSearch(Word);
-        setIsSuccess(true);
-      })
-      .catch((error) => {
-        console.error(error);
-        setIsSuccess(false);
-      });
-  };
+  const searchByClick = useCallback(
+    async (Word) => {
+      //search by click synonyms or antonyms
+      await fetchWordData(Word)
+        .then((data) => {
+          WordHandler(data);
+          setCurrentSearch(Word);
+          setIsSuccess(true);
+        })
+        .catch((error) => {
+          console.error("Fail to search by click:", error);
+          setIsSuccess(false);
+        });
+    },
+    [WordHandler]
+  );
 
   return (
     <div className={`Dictionary-bg ${isNight ? "bg-Black-1 " : "bg-white"}`}>
@@ -120,9 +115,9 @@ export default function Dictionary() {
                   : ""}
                 <hr />
                 <footer className="Dictionary__footer">
-                  <BodyS data={"Source"} />
+                  <TextS data={"Source"} />
                   {sourceUrls?.map((url, index) => (
-                    <BodyS_a data={url} key={index} />
+                    <TextS_a data={url} key={index} />
                   ))}
                 </footer>
               </div>

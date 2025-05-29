@@ -1,5 +1,3 @@
-
-
 .Dictionary__navbar {
   display: flex;
   align-items: center;
@@ -37,6 +35,13 @@
     &__item {
       font-weight: bold;
       margin: 10px 10px;
+      &--flex {
+        display: flex;
+        flex-direction: column;
+      }
+    }
+    &__icon {
+      margin-left: 16px;
     }
   }
   &-toggle {
@@ -219,7 +224,10 @@
         transform: translateX(20px);
       }
       &__item {
-        margin: 28px;
+        margin: 14px;
+        &--flex {
+          flex-direction: row;
+        }
       }
     }
     &-settings {

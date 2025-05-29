@@ -1,11 +1,12 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import { nodePolyfills } from "vite-plugin-node-polyfills";
+import tailwindcss from "@tailwindcss/vite";
 
 // https://vite.dev/config/
 export default defineConfig({
   base: "./",
-  plugins: [react(), nodePolyfills()],
+  plugins: [react(), nodePolyfills(), tailwindcss()],
   server: {
     port: 5173,
     open: true, // 自動打開瀏覽器

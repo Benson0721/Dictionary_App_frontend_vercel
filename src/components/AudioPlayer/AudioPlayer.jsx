@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 
-import "./AudioPlayer.css";
+import "./AudioPlayer.scss";
 
 export default function AudioPlayer({ audioSrc }) {
   const audioRef = useRef(null);

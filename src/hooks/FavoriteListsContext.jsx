@@ -47,19 +47,13 @@ export const FavoriteListsContextProvider = (props) => {
     const user = await localforage.getItem("user");
     if (user) {
       try {
-        // 先更新前端資料，讓使用者感知到新增
         setLists((prev) =>
           Array.isArray(prev) ? [...prev, newList] : [newList]
         );
-
-        // 執行添加到資料庫的操作
         await addFavoriteList(user.id, newList);
-
-        // 完成資料庫操作後再更新列表
         return await fetchLists();
       } catch (e) {
         console.error(e.message);
-        // 發生錯誤時也要刷新列表，以免顯示錯誤資料
         return await fetchLists();
       }
     }
@@ -81,8 +75,6 @@ export const FavoriteListsContextProvider = (props) => {
     if (user) {
       try {
         setLists((prevLists) => prevLists.filter((list) => list.id !== listID));
-
-
         await deleteFavoriteList(user.id, listID);
         await fetchLists();
       } catch (e) {
