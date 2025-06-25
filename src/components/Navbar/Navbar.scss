@@ -22,7 +22,7 @@
     top: 40px;
     transition: all 0.2s ease-in-out;
     box-shadow: 0px 5px 30px rgba(0, 0, 0, 0.1);
-    border-radius: 8px;
+    border-radius: 16px 16px 8px 8px;
     &--open {
       opacity: 1;
       transform: translateX(0px);
@@ -31,17 +31,6 @@
       opacity: 0;
       pointer-events: none;
       transform: translateX(20px);
-    }
-    &__item {
-      font-weight: bold;
-      margin: 10px 10px;
-      &--flex {
-        display: flex;
-        flex-direction: column;
-      }
-    }
-    &__icon {
-      margin-left: 16px;
     }
   }
   &-toggle {
@@ -119,7 +108,7 @@
   }
   &-interface {
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     justify-content: center;
     align-items: center;
     position: relative;
@@ -222,12 +211,6 @@
         opacity: 0;
         pointer-events: none;
         transform: translateX(20px);
-      }
-      &__item {
-        margin: 14px;
-        &--flex {
-          flex-direction: row;
-        }
       }
     }
     &-settings {

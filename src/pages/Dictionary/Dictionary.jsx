@@ -79,7 +79,7 @@ export default function Dictionary() {
   );
 
   return (
-    <div className={`Dictionary-bg ${isNight ? "bg-Black-1 " : "bg-white"}`}>
+    <div className={`Dictionary-bg ${isNight ? "bg-Black-3 " : "bg-white"}`}>
       <main className={`Dictionary font-${font} `}>
         <FavListDrawer openDrawer={openDrawer} setOpenDrawer={setOpenDrawer} />
         <Navbar />
@@ -113,7 +113,7 @@ export default function Dictionary() {
                       />
                     ))
                   : ""}
-                <hr />
+                <hr className={isNight ? "border-white" : "border-Gray-2"} />
                 <footer className="Dictionary__footer">
                   <TextS data={"Source"} />
                   {sourceUrls?.map((url, index) => (

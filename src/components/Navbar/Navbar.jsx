@@ -9,7 +9,12 @@ import moon from "../../assets/icons/icon-moon.svg";
 import selectToggle from "../../assets/icons/selector.svg";
 import SettingsIcon from "@mui/icons-material/Settings";
 import LogoutIcon from "@mui/icons-material/Logout";
+import AppRegistrationIcon from "@mui/icons-material/AppRegistration";
+import LoginIcon from "@mui/icons-material/Login";
 import IconButton from "@mui/material/IconButton";
+import HomeIcon from "@mui/icons-material/Home";
+import AutoStoriesIcon from "@mui/icons-material/AutoStories";
+import FavoriteIcon from "@mui/icons-material/Favorite";
 import "./Navbar.scss";
 
 function DayNightToggle() {
@@ -63,6 +68,7 @@ function FontSelector() {
 }
 
 function VistorInterface({ isMobile, isNight }) {
+  const navigate = useNavigate();
   const [toggle, setToggle] = useState(false);
 
   const menuRef = useRef(null);
@@ -86,12 +92,15 @@ function VistorInterface({ isMobile, isNight }) {
     <div className={`Dictionary__navbar-interface `} ref={menuRef}>
       {isMobile ? (
         <>
-          <div className="Dictionary__navbar__space__item">
-            <Link to={"/register"}>SignUp</Link>
-          </div>
-          <div className="Dictionary__navbar__space__item">
-            <Link to={"/login"}>Login</Link>
-          </div>
+          <IconButton type="button" onClick={() => navigate("/register")}>
+            <AppRegistrationIcon
+              sx={{ color: isNight ? "white" : "#2d2d2d" }}
+            />
+          </IconButton>
+
+          <IconButton type="button" onClick={() => navigate("/login")}>
+            <LoginIcon sx={{ color: isNight ? "white" : "purple" }} />
+          </IconButton>
         </>
       ) : (
         <nav
@@ -99,20 +108,15 @@ function VistorInterface({ isMobile, isNight }) {
             isNight ? "bg-Black-1" : "bg-white"
           } Dictionary__navbar-interface__menu`}
         >
-          <button
-            className={`Dictionary__navbar-interface__button ${
-              isNight ? "bg-white text-Black-3" : "bg-Black-1 text-white"
-            }`}
-          >
-            <Link to={"/register"}>SignUp</Link>
-          </button>
-          <button
-            className={`Dictionary__navbar-interface__button ${
-              isNight ? "bg-purple-600 text-white" : "bg-purple-600 text-white"
-            } ml-4`}
-          >
-            <Link to={"/login"}>Login</Link>
-          </button>
+          <IconButton type="button" onClick={() => navigate("/register")}>
+            <AppRegistrationIcon
+              sx={{ color: isNight ? "white" : "#2d2d2d" }}
+            />
+          </IconButton>
+
+          <IconButton type="button" onClick={() => navigate("/login")}>
+            <LoginIcon sx={{ color: isNight ? "white" : "purple" }} />
+          </IconButton>
         </nav>
       )}
     </div>
@@ -121,6 +125,7 @@ function VistorInterface({ isMobile, isNight }) {
 
 function UserInterface({ user, logoutHandler, isMobile }) {
   const navigate = useNavigate();
+  const { isNight } = useContext(ThemeContext);
 
   const handleLogout = async () => {
     await logoutHandler();
@@ -129,7 +134,7 @@ function UserInterface({ user, logoutHandler, isMobile }) {
 
   return (
     <div className={`Dictionary__navbar-interface`}>
-      {!isMobile && (
+      {/*!isMobile && (
         <div className={`Dictionary__navbar-interface__user `}>
           <img
             className="Dictionary__navbar-interface__avatar"
@@ -138,7 +143,7 @@ function UserInterface({ user, logoutHandler, isMobile }) {
           />
           <span className="mt-1">{user.username}</span>
         </div>
-      )}
+      )*/}
 
       {isMobile && (
         <div className="Dictionary__navbar__space__item">
@@ -152,7 +157,9 @@ function UserInterface({ user, logoutHandler, isMobile }) {
               }
             }}
           >
-            <button type="submit">Logout</button>
+            <IconButton type="submit">
+              <LogoutIcon sx={{ color: isNight ? "white" : "#2d2d2d" }} />
+            </IconButton>
           </form>
         </div>
       )}
@@ -181,7 +188,7 @@ function Settings({ isNight, setFont, font, isMobile }) {
       {isMobile ? (
         <div
           className={` ${
-            isNight ? "bg-Black-1" : "bg-white"
+            isNight ? "bg-Black-3" : "bg-white"
           } Dictionary__navbar-settings__menu-box `}
         >
           <div className="Dictionary__navbar-settings__menu__item">
@@ -194,10 +201,10 @@ function Settings({ isNight, setFont, font, isMobile }) {
       ) : (
         <div className={`Dictionary__navbar-settings `} ref={menuRef}>
           <IconButton onClick={() => setToggle(!toggle)}>
-            <SettingsIcon />
+            <SettingsIcon sx={{ color: isNight ? "white" : "#2d2d2d" }} />
           </IconButton>
 
-          <nav
+          <div
             className={`${
               toggle
                 ? "Dictionary__navbar-settings__menu--open"
@@ -212,7 +219,7 @@ function Settings({ isNight, setFont, font, isMobile }) {
             <div className="Dictionary__navbar-settings__menu__item">
               <DayNightToggle />
             </div>
-          </nav>
+          </div>
         </div>
       )}
     </>
@@ -225,6 +232,7 @@ export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const menuRef = useRef(null);
   const location = useLocation();
+  const navigate = useNavigate();
   const hamButtonStyle = {
     color: isNight ? "white" : "gray",
     fontSize: 30,
@@ -235,35 +243,35 @@ export default function Navbar() {
     switch (location.pathname) {
       case "/":
         return [
-          { to: "/dictionary", text: "Dictionary" },
-          { to: `/${user?.id}/favorites`, text: "Favorites" },
+          { to: "/dictionary", icon: AutoStoriesIcon },
+          { to: `/${user?.id}/favorites`, icon: FavoriteIcon },
         ];
       case `/${user?.id}/favorites`:
         return [
-          { to: "/", text: "Home" },
-          { to: "/dictionary", text: "Dictionary" },
+          { to: "/", icon: HomeIcon },
+          { to: "/dictionary", icon: AutoStoriesIcon },
         ];
       case "/dictionary":
         return [
-          { to: "/", text: "Home" },
-          { to: `/${user?.id}/favorites`, text: "Favorites" },
+          { to: "/", icon: HomeIcon },
+          { to: `/${user?.id}/favorites`, icon: FavoriteIcon },
         ];
       case "/login":
         return [
-          { to: "/", text: "Home" },
-          { to: "/dictionary", text: "Dictionary" },
+          { to: "/", icon: HomeIcon },
+          { to: "/dictionary", icon: AutoStoriesIcon },
         ];
       case "/register":
         return [
-          { to: "/", text: "Home" },
-          { to: "/dictionary", text: "Dictionary" },
+          { to: "/", icon: HomeIcon },
+          { to: "/dictionary", icon: AutoStoriesIcon },
         ];
 
       default:
         return [
-          { to: "/", label: "Home" },
-          { to: "/dictionary", label: "Dictionary" },
-          { to: `/${user?.id}/favorites`, label: "Favorites" },
+          { to: "/", icon: HomeIcon },
+          { to: "/dictionary", icon: AutoStoriesIcon },
+          { to: `/${user?.id}/favorites`, icon: FavoriteIcon },
         ];
     }
   };
@@ -300,7 +308,7 @@ export default function Navbar() {
     <nav
       ref={menuRef}
       className={`Dictionary__navbar ${
-        isNight ? "bg-Black-1 text-white" : "bg-white text-Black-3"
+        isNight ? "bg-Black-3 text-white" : "bg-white text-Black-3"
       }  transition duration-400 ease-in-out`}
     >
       <img
@@ -317,7 +325,7 @@ export default function Navbar() {
       )}
       <div
         className={`Dictionary__navbar__space 
-          ${isNight ? "bg-Black-1 " : "bg-white "}
+          ${isNight ? "bg-Black-3 " : "bg-white "}
           ${
             isOpen
               ? "Dictionary__navbar__space--open"
@@ -325,49 +333,77 @@ export default function Navbar() {
           } 
         `}
       >
-        {getNavItems().map((item, index) => (
-          <div key={index} className="Dictionary__navbar__space__item">
-            <Link to={`${item.to}`}>{item.text}</Link>
-          </div>
-        ))}
-        <div className="Dictionary__navbar__space__item Dictionary__navbar__space__item--flex">
-          {isLoggedIn ? (
-            <UserInterface
-              user={user}
-              isNight={isNight}
-              logoutHandler={logoutHandler}
-              isMobile={isMobile}
+        {isLoggedIn && (
+          <div className={`Dictionary__navbar-interface__user `}>
+            <img
+              className="Dictionary__navbar-interface__avatar"
+              src={avatar}
+              alt="avatar"
             />
-          ) : (
-            <VistorInterface isMobile={isMobile} isNight={isNight} />
-          )}
-          <div className="flex items-center">
-            {location.pathname !== "/register" &&
-              location.pathname !== "/login" && (
-                <div className="Dictionary__navbar__space__icon">
-                  <Settings isNight={isNight} isMobile={isMobile} />
+            <span className="mt-1">{user?.username}</span>
+          </div>
+        )}
+        {isMobile && (
+          <hr className="absolute top-16 w-full border-Gray-4 border-1 mb-1" />
+        )}
+
+        <div className=" md:ml-6">
+          <div className="flex sm:flex-col md:flex-row items-center">
+            <div className="order-1 md:order-2">
+              {location.pathname !== "/register" &&
+                location.pathname !== "/login" && (
+                  <div className="Dictionary__navbar__space__icon">
+                    <Settings isNight={isNight} isMobile={isMobile} />
+                  </div>
+                )}
+            </div>
+            <div className="flex items-center order-2 md:order-1  mt-4  md:mt-0  ">
+              {getNavItems().map((item, index) => (
+                <div key={index} className="Dictionary__navbar__space__item">
+                  <IconButton
+                    onClick={() => navigate(item.to)}
+                    sx={{
+                      color: isNight ? "white" : "#2d2d2d",
+                      marginRight: "8px",
+                    }}
+                  >
+                    <item.icon />
+                  </IconButton>
+                  {/*<Link to={`${item.to}`}>{item.text}</Link>*/}
                 </div>
+              ))}
+              {isLoggedIn ? (
+                <UserInterface
+                  user={user}
+                  isNight={isNight}
+                  logoutHandler={logoutHandler}
+                  isMobile={isMobile}
+                />
+              ) : (
+                <VistorInterface isMobile={isMobile} isNight={isNight} />
               )}
-            <div
+            </div>
+            {/*<div
               className={`Dictionary__navbar__space__icon ${
                 isMobile ? "hidden" : ""
               }`}
             >
               <form
+                className={isLoggedIn ? "block ml-2 " : "hidden"}
                 onSubmit={(event) => {
                   if (!confirm("Are you sure you want to logout?")) {
                     event.preventDefault();
                   } else {
                     event.preventDefault();
-                    handleLogout();
+                    logoutHandler();
                   }
                 }}
               >
                 <IconButton type="submit">
-                  <LogoutIcon />
+                  <LogoutIcon sx={{ color: isNight ? "white" : "#2d2d2d" }} />
                 </IconButton>
               </form>
-            </div>
+            </div>*/}
           </div>
         </div>
       </div>

@@ -42,12 +42,16 @@ export default function AudioPlayer({ audioSrc }) {
     <>
       <audio src={audioSrc} ref={audioRef} />
       <button
-        className={`Dictonary__playButton ${isAudioExist ? "block" : "hidden"}`}
-        onClick={playAudio}
+        className={`${isAudioExist ? "" : "Dictonary__playButton--disabled"}`}
+        onClick={isAudioExist ? playAudio : null}
         disabled={isButtonDisabled}
       >
         <svg
-          className="Dictonary__playButton__icon"
+          className={`${
+            isAudioExist
+              ? "Dictonary__playButton__icon"
+              : "Dictonary__playButton--disabled"
+          }`}
           xmlns="http://www.w3.org/2000/svg"
           width="75"
           height="75"

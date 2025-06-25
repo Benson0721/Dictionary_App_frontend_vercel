@@ -34,7 +34,10 @@ export default function IconsDialog({
     );
   }, [searchIcon]);
 
-  const handleClose = useCallback(() => {
+  const handleClose = useCallback((cancel) => {
+    if (cancel) {
+      setSelectedIcon(null);
+    }
     setSearchIcon(null);
     setOpenDialog(false);
   }, []);
@@ -127,10 +130,10 @@ export default function IconsDialog({
           </Grid>
         </Box>
         <DialogActions>
-          <Button onClick={handleClose}>Disagree</Button>
-          <Button onClick={handleClose} autoFocus>
-            Agree
+          <Button onClick={() => handleClose(false)} autoFocus>
+            Confirm
           </Button>
+          <Button onClick={() => handleClose(true)}>Cancel</Button>
         </DialogActions>
       </Dialog>
     </React.Fragment>

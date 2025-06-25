@@ -121,6 +121,10 @@ export default function LoginPage() {
             </button>
           </div>
         </form>
+        <div className="p-2 border-2 border-Black-3 absolute top-1/5 right-1/5 transform -translate-x-1/2">
+          <p>測試用帳號: iamtest</p>
+          <p>測試用密碼: Iamtest123!</p>
+        </div>
       </div>
     </div>
   );

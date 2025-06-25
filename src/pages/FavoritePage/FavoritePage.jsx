@@ -189,7 +189,7 @@ export default function FavoritePage() {
               </>
             )}
             <hr className="mt-3" />
-            <ul className="Dictionary__favoritePage__list">
+            <ul className="Dictionary__favoritePage__list overflow-y-auto hide-scrollbar">
               {isLoading ? (
                 <></>
               ) : (
