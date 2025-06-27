@@ -70,6 +70,7 @@ function FontSelector() {
 function VistorInterface({ isMobile, isNight }) {
   const navigate = useNavigate();
   const [toggle, setToggle] = useState(false);
+  const { user } = useContext(AuthContext);
 
   const menuRef = useRef(null);
 
@@ -89,25 +90,52 @@ function VistorInterface({ isMobile, isNight }) {
     };
   }, [toggle]);
   return (
-    <div className={`Dictionary__navbar-interface `} ref={menuRef}>
+    <div className={`Dictionary__navbar-interface gap-4`} ref={menuRef}>
       {isMobile ? (
-        <>
-          <IconButton type="button" onClick={() => navigate("/register")}>
-            <AppRegistrationIcon
-              sx={{ color: isNight ? "white" : "#2d2d2d" }}
-            />
-          </IconButton>
+        <div className="flex flex-col gap-4">
+          <div className="flex gap-4">
+            {location.pathname === "/" ? (
+              <IconButton type="button" onClick={() => navigate("/dictionary")}>
+                <AutoStoriesIcon
+                  sx={{ color: isNight ? "white" : "#2d2d2d" }}
+                />
+              </IconButton>
+            ) : (
+              <IconButton type="button" onClick={() => navigate("/")}>
+                <HomeIcon sx={{ color: isNight ? "white" : "#2d2d2d" }} />
+              </IconButton>
+            )}
 
-          <IconButton type="button" onClick={() => navigate("/login")}>
-            <LoginIcon sx={{ color: isNight ? "white" : "purple" }} />
-          </IconButton>
-        </>
+            <IconButton
+              type="button"
+              onClick={() => navigate(`/${user?.id}/favorites`)}
+            >
+              <FavoriteIcon sx={{ color: isNight ? "white" : "#2d2d2d" }} />
+            </IconButton>
+          </div>
+          <div className="flex gap-4">
+            <IconButton type="button" onClick={() => navigate("/register")}>
+              <AppRegistrationIcon
+                sx={{ color: isNight ? "white" : "#2d2d2d" }}
+              />
+            </IconButton>
+
+            <IconButton type="button" onClick={() => navigate("/login")}>
+              <LoginIcon sx={{ color: isNight ? "white" : "purple" }} />
+            </IconButton>
+          </div>
+        </div>
       ) : (
         <nav
           className={` ${
             isNight ? "bg-Black-1" : "bg-white"
           } Dictionary__navbar-interface__menu`}
         >
+          {location.pathname === "/dictionary" && (
+            <IconButton type="button" onClick={() => navigate("/")}>
+              <HomeIcon sx={{ color: isNight ? "white" : "#2d2d2d" }} />
+            </IconButton>
+          )}
           <IconButton type="button" onClick={() => navigate("/register")}>
             <AppRegistrationIcon
               sx={{ color: isNight ? "white" : "#2d2d2d" }}
@@ -132,42 +160,88 @@ function UserInterface({ user, logoutHandler, isMobile }) {
     navigate("/dictionary");
   };
 
+  const getSettingItems = () => {
+    switch (location.pathname) {
+      case "/":
+        return [{ to: `/${user?.id}/favorites`, icon: FavoriteIcon }];
+      case `/${user?.id}/favorites`:
+        return [
+          { to: "/", icon: HomeIcon },
+          isMobile ? { to: "/dictionary", icon: AutoStoriesIcon } : null,
+        ];
+
+      case "/dictionary":
+        return [
+          { to: "/", icon: HomeIcon },
+          isMobile
+            ? { to: `/${user?.id}/favorites`, icon: FavoriteIcon }
+            : null,
+        ];
+      case "/login":
+        return [
+          { to: "/", icon: HomeIcon },
+          { to: "/dictionary", icon: AutoStoriesIcon },
+        ];
+      case "/register":
+        return [
+          { to: "/", icon: HomeIcon },
+          { to: "/dictionary", icon: AutoStoriesIcon },
+        ];
+
+      default:
+        return [
+          { to: "/", icon: HomeIcon },
+          { to: "/dictionary", icon: AutoStoriesIcon },
+          { to: `/${user?.id}/favorites`, icon: FavoriteIcon },
+        ];
+    }
+  };
+
   return (
     <div className={`Dictionary__navbar-interface`}>
-      {/*!isMobile && (
-        <div className={`Dictionary__navbar-interface__user `}>
-          <img
-            className="Dictionary__navbar-interface__avatar"
-            src={avatar}
-            alt="avatar"
-          />
-          <span className="mt-1">{user.username}</span>
-        </div>
-      )*/}
-
-      {isMobile && (
-        <div className="Dictionary__navbar__space__item">
-          <form
-            onSubmit={(event) => {
-              if (!confirm("Please confirm you want to delete this record.")) {
-                event.preventDefault();
-              } else {
-                event.preventDefault();
-                handleLogout();
-              }
-            }}
-          >
-            <IconButton type="submit">
-              <LogoutIcon sx={{ color: isNight ? "white" : "#2d2d2d" }} />
-            </IconButton>
-          </form>
-        </div>
-      )}
+      <div className="flex gap-4">
+        {getSettingItems().map((item, index) =>
+          item === null ? null : (
+            <div key={index}>
+              <IconButton
+                onClick={() => navigate(item.to)}
+                sx={{
+                  color: isNight ? "white" : "#2d2d2d",
+                }}
+              >
+                <item.icon />
+              </IconButton>
+            </div>
+          )
+        )}
+        <form
+          onSubmit={(event) => {
+            if (!confirm("Please confirm you want to delete this record.")) {
+              event.preventDefault();
+            } else {
+              event.preventDefault();
+              handleLogout();
+            }
+          }}
+        >
+          <IconButton type="submit">
+            <LogoutIcon sx={{ color: isNight ? "white" : "#2d2d2d" }} />
+          </IconButton>
+        </form>
+      </div>
     </div>
   );
 }
 
-function Settings({ isNight, setFont, font, isMobile }) {
+function Settings({
+  isNight,
+  setFont,
+  font,
+  isMobile,
+  isLoggedIn,
+  user,
+  logoutHandler,
+}) {
   const menuRef = useRef(null);
   const [toggle, setToggle] = useState(false);
   useEffect(() => {
@@ -191,11 +265,35 @@ function Settings({ isNight, setFont, font, isMobile }) {
             isNight ? "bg-Black-3" : "bg-white"
           } Dictionary__navbar-settings__menu-box `}
         >
+          {isLoggedIn && (
+            <>
+              <div className={`Dictionary__navbar-interface__user `}>
+                <img
+                  className="Dictionary__navbar-interface__avatar"
+                  src={avatar}
+                  alt="avatar"
+                />
+                <span className="mt-1">{user?.username}</span>
+              </div>
+              <hr className="absolute top-16 left-0 w-full border-Gray-4 border-1 mb-1" />
+            </>
+          )}
+
           <div className="Dictionary__navbar-settings__menu__item">
             <FontSelector setFont={setFont} font={font} />
           </div>
+
           <div className="Dictionary__navbar-settings__menu__item">
-            <DayNightToggle />
+            {isLoggedIn ? (
+              <UserInterface
+                user={user}
+                isNight={isNight}
+                logoutHandler={logoutHandler}
+                isMobile={isMobile}
+              />
+            ) : (
+              <VistorInterface isMobile={isMobile} isNight={isNight} />
+            )}
           </div>
         </div>
       ) : (
@@ -213,11 +311,35 @@ function Settings({ isNight, setFont, font, isMobile }) {
               isNight ? "bg-Black-1" : "bg-white"
             } Dictionary__navbar-settings__menu-box `}
           >
+            {isLoggedIn && (
+              <>
+                <div className={`Dictionary__navbar-interface__user `}>
+                  <img
+                    className="Dictionary__navbar-interface__avatar"
+                    src={avatar}
+                    alt="avatar"
+                  />
+                  <span className="mt-1">{user?.username}</span>
+                </div>
+                <hr className="absolute top-16 w-full border-Gray-4 border-1 mb-1" />
+              </>
+            )}
+
             <div className="Dictionary__navbar-settings__menu__item">
               <FontSelector setFont={setFont} font={font} />
             </div>
+
             <div className="Dictionary__navbar-settings__menu__item">
-              <DayNightToggle />
+              {isLoggedIn ? (
+                <UserInterface
+                  user={user}
+                  isNight={isNight}
+                  logoutHandler={logoutHandler}
+                  isMobile={isMobile}
+                />
+              ) : (
+                <VistorInterface isMobile={isMobile} isNight={isNight} />
+              )}
             </div>
           </div>
         </div>
@@ -236,25 +358,24 @@ export default function Navbar() {
   const hamButtonStyle = {
     color: isNight ? "white" : "gray",
     fontSize: 30,
-    marginLeft: "auto",
+    marginLeft: "32px",
   };
 
   const getNavItems = () => {
     switch (location.pathname) {
       case "/":
         return [
-          { to: "/dictionary", icon: AutoStoriesIcon },
-          { to: `/${user?.id}/favorites`, icon: FavoriteIcon },
+          !isMobile ? { to: "/dictionary", icon: AutoStoriesIcon } : null,
         ];
       case `/${user?.id}/favorites`:
         return [
-          { to: "/", icon: HomeIcon },
-          { to: "/dictionary", icon: AutoStoriesIcon },
+          !isMobile ? { to: "/dictionary", icon: AutoStoriesIcon } : null,
         ];
       case "/dictionary":
         return [
-          { to: "/", icon: HomeIcon },
-          { to: `/${user?.id}/favorites`, icon: FavoriteIcon },
+          !isMobile
+            ? { to: `/${user?.id}/favorites`, icon: FavoriteIcon }
+            : null,
         ];
       case "/login":
         return [
@@ -316,6 +437,9 @@ export default function Navbar() {
         alt="dictionary__logo"
         className="Dictionary__navbar__logo"
       />
+      <div className="ml-auto">
+        <DayNightToggle />
+      </div>
 
       {isMobile && (
         <MenuIcon
@@ -333,77 +457,42 @@ export default function Navbar() {
           } 
         `}
       >
-        {isLoggedIn && (
-          <div className={`Dictionary__navbar-interface__user `}>
-            <img
-              className="Dictionary__navbar-interface__avatar"
-              src={avatar}
-              alt="avatar"
-            />
-            <span className="mt-1">{user?.username}</span>
-          </div>
-        )}
-        {isMobile && (
-          <hr className="absolute top-16 w-full border-Gray-4 border-1 mb-1" />
-        )}
-
         <div className=" md:ml-6">
           <div className="flex sm:flex-col md:flex-row items-center">
             <div className="order-1 md:order-2">
               {location.pathname !== "/register" &&
                 location.pathname !== "/login" && (
                   <div className="Dictionary__navbar__space__icon">
-                    <Settings isNight={isNight} isMobile={isMobile} />
+                    <Settings
+                      isNight={isNight}
+                      isMobile={isMobile}
+                      isLoggedIn={isLoggedIn}
+                      user={user}
+                      logoutHandler={logoutHandler}
+                    />
                   </div>
                 )}
             </div>
-            <div className="flex items-center order-2 md:order-1  mt-4  md:mt-0  ">
-              {getNavItems().map((item, index) => (
-                <div key={index} className="Dictionary__navbar__space__item">
-                  <IconButton
-                    onClick={() => navigate(item.to)}
-                    sx={{
-                      color: isNight ? "white" : "#2d2d2d",
-                      marginRight: "8px",
-                    }}
-                  >
-                    <item.icon />
-                  </IconButton>
-                  {/*<Link to={`${item.to}`}>{item.text}</Link>*/}
+            <div className="flex flex-col gap-4 items-center order-2 md:order-1   ">
+              {
+                <div className="flex items-center gap-4 md:gap-0">
+                  {getNavItems().map((item, index) =>
+                    item === null ? null : (
+                      <div key={index}>
+                        <IconButton
+                          onClick={() => navigate(item.to)}
+                          sx={{
+                            color: isNight ? "white" : "#2d2d2d",
+                          }}
+                        >
+                          <item.icon />
+                        </IconButton>
+                      </div>
+                    )
+                  )}
                 </div>
-              ))}
-              {isLoggedIn ? (
-                <UserInterface
-                  user={user}
-                  isNight={isNight}
-                  logoutHandler={logoutHandler}
-                  isMobile={isMobile}
-                />
-              ) : (
-                <VistorInterface isMobile={isMobile} isNight={isNight} />
-              )}
+              }
             </div>
-            {/*<div
-              className={`Dictionary__navbar__space__icon ${
-                isMobile ? "hidden" : ""
-              }`}
-            >
-              <form
-                className={isLoggedIn ? "block ml-2 " : "hidden"}
-                onSubmit={(event) => {
-                  if (!confirm("Are you sure you want to logout?")) {
-                    event.preventDefault();
-                  } else {
-                    event.preventDefault();
-                    logoutHandler();
-                  }
-                }}
-              >
-                <IconButton type="submit">
-                  <LogoutIcon sx={{ color: isNight ? "white" : "#2d2d2d" }} />
-                </IconButton>
-              </form>
-            </div>*/}
           </div>
         </div>
       </div>

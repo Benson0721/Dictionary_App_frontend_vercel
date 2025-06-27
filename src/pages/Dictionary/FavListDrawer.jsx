@@ -62,10 +62,6 @@ export default function FavListDrawer({ openDrawer, setOpenDrawer }) {
   useEffect(() => {
     if (curWordData) {
       setCurWord(curWordData);
-      const isWordFavorited = allFavoriteWords?.some(
-        (fav) => fav.word === word.vocabulary
-      );
-      setIsFav(isWordFavorited);
 
       const foundFav = allFavoriteWords?.find(
         (fav) => fav.word === word.vocabulary

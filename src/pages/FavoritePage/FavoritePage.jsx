@@ -22,6 +22,8 @@ import ListItemText from "@mui/material/ListItemText";
 import ThemeContext from "../../hooks/ThemeContext";
 import { FavWordHeading } from "../../components/Headings";
 import { useMediaQuery } from "@mui/material";
+import AuthContext from "../../hooks/AuthContext";
+
 const ListDrawer = ({ isOpen, setIsOpen, font }) => {
   const { lists, setCurrentList } = useContext(FavoriteListsContext);
 
@@ -112,12 +114,17 @@ const ListDrawer = ({ isOpen, setIsOpen, font }) => {
 
 export default function FavoritePage() {
   const { currentList, setCurrentList } = useContext(FavoriteListsContext);
-  const { currentFavWords, removeFavWord, fetchCurrentFavWords } =
-    useContext(FavoriteWordsContext);
+  const {
+    currentFavWords,
+    setCurrentFavWords,
+    removeFavWord,
+    fetchCurrentFavWords,
+  } = useContext(FavoriteWordsContext);
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 767);
   const [isOpen, setIsOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const { font, isNight } = useContext(ThemeContext);
+  const { user } = useContext(AuthContext);
 
   useEffect(() => {
     const handleLoading = () => {
@@ -143,6 +150,11 @@ export default function FavoritePage() {
   }, []);
 
   useEffect(() => {
+    setCurrentList(null);
+    setCurrentFavWords([]);
+  }, [user]);
+
+  useEffect(() => {
     const handleFetch = async () => {
       if (currentList) {
         await fetchCurrentFavWords(currentList.id);
@@ -166,6 +178,7 @@ export default function FavoritePage() {
             isOpen={isOpen}
             setIsOpen={setIsOpen}
             font={font}
+            setCurrentFavWords={setCurrentFavWords}
           />
           <div className="Dictionary__favoritePage__main">
             {currentList ? (

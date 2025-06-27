@@ -1,4 +1,4 @@
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
 import ThemeContext from "../hooks/ThemeContext";
 import FavoriteWordsContext from "../hooks/FavoriteWordsContext";
 import AuthContext from "../hooks/AuthContext";
@@ -15,13 +15,15 @@ export function WordCard({
   openDrawer,
 }) {
   const { isNight } = useContext(ThemeContext);
-  const { isFav } = useContext(FavoriteWordsContext);
+  const { allFavoriteWords } = useContext(FavoriteWordsContext);
   const { user } = useContext(AuthContext);
 
   const heartStyle = {
     color: pink[500],
     fontSize: 30,
   };
+
+
 
   return (
     <div className={`flex flex-col items-start ${spacing}`}>
@@ -35,7 +37,7 @@ export function WordCard({
         </h1>
         {user ? (
           <IconButton id="margin" onClick={() => setOpenDrawer(!openDrawer)}>
-            {isFav ? (
+            {allFavoriteWords.some((word) => word.word === vocubulary) ? (
               <FavoriteIcon sx={heartStyle} />
             ) : (
               <FavoriteBorderIcon sx={heartStyle} />

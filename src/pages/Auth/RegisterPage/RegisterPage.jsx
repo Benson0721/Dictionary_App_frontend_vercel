@@ -8,6 +8,7 @@ import { useActionData, useSubmit } from "react-router";
 import Navbar from "../../../../src/components/Navbar/Navbar";
 import localforage from "localforage";
 import "./RegisterPage.scss";
+import ThemeContext from "../../../hooks/ThemeContext";
 
 export default function RegisterPage() {
   const {
@@ -20,6 +21,7 @@ export default function RegisterPage() {
   const { setIsLoggedIn, setUser } = useContext(AuthContext);
   const actionData = useActionData();
   const submit = useSubmit();
+  const { isNight } = useContext(ThemeContext);
 
   useEffect(() => {
     const checkUserStatus = async () => {
@@ -45,10 +47,12 @@ export default function RegisterPage() {
   };
 
   return (
-    <div className="Dictionary__RegisterPage__bg font-Inter">
+    <div className={`Dictionary__RegisterPage__bg ${isNight ? "bg-Black-3 text-white" : "bg-white text-Black-3"} font-Inter`}>
       <div className="Dictionary__RegisterPage">
         <Navbar />
-        <h1 className="Dictionary__RegisterPage__item text-[28px] md:text-[48px] font-extrabold text-Black-3">
+        <h1
+          className={`Dictionary__RegisterPage__item text-[28px] md:text-[48px] font-extrabold `}
+        >
           Register
         </h1>
         <form onSubmit={handleSubmit(onSubmit)}>
@@ -131,7 +135,7 @@ export default function RegisterPage() {
             </button>
 
             <button
-              className="Dictionary__RegisterPage__button font-extrabold bg-Black-3 text-white"
+              className="Dictionary__RegisterPage__button font-extrabold bg-Black-1 text-white"
               type="button"
               onClick={() => {
                 navigate("/login");
@@ -141,6 +145,10 @@ export default function RegisterPage() {
             </button>
           </div>
         </form>
+        <div className={`p-2 border-2 border-Black-3 absolute top-1/5 right-1 transform ${isNight ? "border-white text-white" : ""}`}>
+          <p>測試用帳號: iamtest</p>
+          <p>測試用密碼: Iamtest123!</p>
+        </div>
       </div>
     </div>
   );

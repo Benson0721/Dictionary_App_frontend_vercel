@@ -8,8 +8,6 @@ import {
 import localforage from "localforage";
 import AuthContext from "./AuthContext";
 
-
-
 export const FavoriteWordsContext = createContext({
   isFav: false,
   setIsFav: () => {},
@@ -24,9 +22,7 @@ export const FavoriteWordsContext = createContext({
 export const FavoriteWordsContextProvider = (props) => {
   const [currentFavWords, setCurrentFavWords] = useState([]);
   const [allFavoriteWords, setAllFavoriteWords] = useState([]);
-  const [isFav, setIsFav] = useState(false);
   const { user } = useContext(AuthContext);
-
 
   const fetchCurrentFavWords = async (listID) => {
     const user = await localforage.getItem("user");
@@ -67,9 +63,7 @@ export const FavoriteWordsContextProvider = (props) => {
     const user = await localforage.getItem("user");
     if (user) {
       try {
-        setCurrentFavWords((prev) =>
-          prev.filter((word) => word.id !== wordID)
-        );
+        setCurrentFavWords((prev) => prev.filter((word) => word.id !== wordID));
         await removeFavoriteWord(user.id, listID, wordID);
         await fetchCurrentFavWords(listID);
       } catch (e) {
@@ -81,17 +75,19 @@ export const FavoriteWordsContextProvider = (props) => {
 
   useEffect(() => {
     const handleAllWords = async () => {
+
       await fetchAllFavWords();
+
     };
     if (user) {
       handleAllWords();
+
     }
   }, [user]);
 
   const contextValue = useMemo(
     () => ({
-      isFav,
-      setIsFav,
+
       currentFavWords,
       allFavoriteWords,
       setCurrentFavWords,

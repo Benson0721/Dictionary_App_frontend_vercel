@@ -8,6 +8,7 @@ import localforage from "localforage";
 import { useSubmit, useActionData } from "react-router";
 import Navbar from "../../../../src/components/Navbar/Navbar";
 import "./LoginPage.scss";
+import ThemeContext from "../../../hooks/ThemeContext";
 
 export default function LoginPage() {
   const {
@@ -16,6 +17,7 @@ export default function LoginPage() {
     formState: { errors },
   } = useForm({ resolver: joiResolver(LoginRule) });
   const { setUser, setIsLoggedIn } = useContext(AuthContext);
+  const { isNight } = useContext(ThemeContext);
 
   const actionData = useActionData();
   const submit = useSubmit();
@@ -46,10 +48,16 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="Dictionary__LoginPage__bg font-Inter">
+    <div
+      className={`Dictionary__LoginPage__bg font-Inter ${
+        isNight ? "bg-Black-3 text-white" : "bg-white text-black"
+      }`}
+    >
       <div className="Dictionary__LoginPage">
         <Navbar />
-        <h1 className="Dictionary__LoginPage__item text-[28px] md:text-[48px] font-extrabold text-Black-3">
+        <h1
+          className={`Dictionary__LoginPage__item text-[28px] md:text-[48px] font-extrabold `}
+        >
           Login
         </h1>
         {actionData?.error && actionData?.error.length > 0 && (
@@ -111,7 +119,7 @@ export default function LoginPage() {
             </button>
 
             <button
-              className="Dictionary__LoginPage__button font-extrabold bg-Black-3 text-white"
+              className={`Dictionary__LoginPage__button font-extrabold bg-Black-1 text-white`}
               type="button"
               onClick={() => {
                 navigate("/register");
@@ -121,7 +129,11 @@ export default function LoginPage() {
             </button>
           </div>
         </form>
-        <div className="p-2 border-2 border-Black-3 absolute top-1/5 right-1/5 transform -translate-x-1/2">
+        <div
+          className={`p-2 border-2 border-Black-3 absolute top-2/7 right-1 transform ${
+            isNight ? "border-white " : ""
+          }`}
+        >
           <p>測試用帳號: iamtest</p>
           <p>測試用密碼: Iamtest123!</p>
         </div>
