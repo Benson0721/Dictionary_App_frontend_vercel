@@ -24,17 +24,17 @@ Auth: Passport.js
 
 ## 功能特色
 
-使用者功能
+### 使用者功能
 
 - 註冊 / 登入驗證
 
-字典功能
+### 字典功能
 
 - 搜尋
 - 檢視單字各詞性定義/發音
 - 檢視收藏狀態
 
-收藏功能
+### 收藏功能
 
 - 建立/管理收藏清單
 - 收藏單字
@@ -89,9 +89,12 @@ Dictionary-App_vercel/
 
 ## LiveSite
 
-- GitHub - [Dictionary App](https://github.com/Mpass)
+- GitHub - [Repository](https://github.com/Benson0721/Dictionary_App_frontend_vercel)
 - Live Site - [Dictionary App](https://dictionary-app-frontend-vercel.vercel.app/)
 
 ## 作者資訊
 
-- 作品集 - [Mpass](https://www.notion.so/Front-End-layout-Portfolio-1c4acba779c38053a9dcf4b1caa7af0c)
+- 作者：Benson
+- 前端學習者-以成為一名前端工程師為目標!
+- 作品集： [Notion](https://www.notion.so/Front-End-layout-Portfolio-1c4acba779c38053a9dcf4b1caa7af0c)/[Cake](https://www.cake.me/a092468579/portfolios)
+- Email：a092468579@gmail.com
