@@ -5,7 +5,7 @@ import tailwindcss from "@tailwindcss/vite";
 
 // https://vite.dev/config/
 export default defineConfig({
-  base: "./",
+  base: "/",
   plugins: [react(), nodePolyfills(), tailwindcss()],
   build: {
     outDir: "dist",
@@ -15,12 +15,12 @@ export default defineConfig({
   server: {
     port: 5173,
     open: true, // 自動打開瀏覽器
-    proxy: {
+    /*proxy: {
       "/api": {
         target: "http://localhost:5000", // Express 伺服器的地址
         changeOrigin: true, //讓請求看起來統一由前端端口發出，避免CORS限制
         rewrite: (path) => path.replace(/^\/api/, ""),
       },
-    },
+    },*/
   },
 });

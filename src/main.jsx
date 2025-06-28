@@ -53,7 +53,9 @@ ReactDOM.createRoot(document.getElementById("root")).render(
         <FavoriteListsContextProvider>
           <FavoriteWordsContextProvider>
             <DictionaryContentProvider>
+
               <RouterProvider router={router} />
+
             </DictionaryContentProvider>
           </FavoriteWordsContextProvider>
         </FavoriteListsContextProvider>

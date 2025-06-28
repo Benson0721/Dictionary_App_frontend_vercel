@@ -2,13 +2,13 @@ import axios from "axios";
 const baseURL =
   process.env.NODE_ENV === "production"
     ? import.meta.env.VITE_API_URL
-    : window.location.origin;
+    : "http://localhost:5000";
 
 export async function login(userData) {
   try {
     const { username, password } = userData;
     const response = await axios.post(
-      `${baseURL}/api/login`,
+      `${baseURL}/login`,
       {
         username,
         password,
@@ -25,7 +25,7 @@ export async function login(userData) {
 export async function signUp(userData) {
   try {
     const { email, username, password } = userData;
-    const response = await axios.post(`${baseURL}/api/register`, {
+    const response = await axios.post(`${baseURL}/register`, {
       email,
       username,
       password,
@@ -38,14 +38,14 @@ export async function signUp(userData) {
 }
 
 export async function checkAuth() {
-  const res = await axios.get(`${baseURL}/api/checkAuth`, {
+  const res = await axios.get(`${baseURL}/checkAuth`, {
     withCredentials: true, // 讓瀏覽器傳送 Cookie
   });
   return res.data;
 }
 
 export async function logout() {
-  await axios.get(`${baseURL}/api/logout`, {
+  await axios.get(`${baseURL}/logout`, {
     withCredentials: true, 
   });
 }

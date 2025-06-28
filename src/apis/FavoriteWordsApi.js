@@ -2,11 +2,11 @@ import axios from "axios";
 const baseURL =
   process.env.NODE_ENV === "production"
     ? import.meta.env.VITE_API_URL
-    : window.location.origin;
+    : "http://localhost:5000";
 
 export const getFavoriteWords = async (userID, listID) => {
   try {
-    const res = await axios.get(`${baseURL}/api/${userID}/lists/${listID}`, {
+    const res = await axios.get(`${baseURL}/${userID}/lists/${listID}`, {
       withCredentials: true,
     });
     return res.data;
@@ -17,7 +17,7 @@ export const getFavoriteWords = async (userID, listID) => {
 
 export const getAllFavoriteWords = async (userID) => {
   try {
-    const res = await axios.get(`${baseURL}/api/${userID}`, {
+    const res = await axios.get(`${baseURL}/${userID}`, {
       withCredentials: true,
     });
     return res.data;
@@ -29,7 +29,7 @@ export const getAllFavoriteWords = async (userID) => {
 export const addFavoriteWord = async (userID, listID, newWord) => {
   try {
     await axios.post(
-      `${baseURL}/api/${userID}/lists/${listID}/favorites`,
+      `${baseURL}/${userID}/lists/${listID}/favorites`,
       {
         newWord: newWord,
       },
@@ -46,7 +46,7 @@ export const addFavoriteWord = async (userID, listID, newWord) => {
 export const removeFavoriteWord = async (userID, listID, wordID) => {
   try {
     await axios.delete(
-      `${baseURL}/api/${userID}/lists/${listID}/favorites/${wordID}`,
+      `${baseURL}/${userID}/lists/${listID}/favorites/${wordID}`,
       {
         withCredentials: true,
       }

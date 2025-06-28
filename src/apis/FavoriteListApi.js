@@ -2,11 +2,11 @@ import axios from "axios";
 const baseURL =
   process.env.NODE_ENV === "production"
     ? import.meta.env.VITE_API_URL
-    : window.location.origin;
+    : "http://localhost:5000";
 
 export const getFavoriteLists = async (userID) => {
   try {
-    const res = await axios.get(`${baseURL}/api/${userID}/lists`, {
+    const res = await axios.get(`${baseURL}/${userID}/lists`, {
       withCredentials: true,
     });
     return res.data;
@@ -18,7 +18,7 @@ export const getFavoriteLists = async (userID) => {
 export const addFavoriteList = async (userID, newList) => {
   try {
     const res = await axios.post(
-      `${baseURL}/api/${userID}/lists`,
+      `${baseURL}/${userID}/lists`,
       {
         data: newList,
       },
@@ -34,7 +34,7 @@ export const addFavoriteList = async (userID, newList) => {
 
 export const deleteFavoriteList = async (userID, listID) => {
   try {
-    await axios.delete(`${baseURL}/api/${userID}/lists/${listID}`, {
+    await axios.delete(`${baseURL}/${userID}/lists/${listID}`, {
       withCredentials: true,
     });
     return { success: "Delete Favorite Success!" };
@@ -46,7 +46,7 @@ export const deleteFavoriteList = async (userID, listID) => {
 export const updateFavoriteLists = async (userID, updatedLists) => {
   try {
     const res = await axios.patch(
-      `${baseURL}/api/${userID}/lists`,
+      `${baseURL}/${userID}/lists`,
       {
         listUpdates: updatedLists.map((list) => ({
           listId: list._id,
