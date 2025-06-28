@@ -37,7 +37,7 @@ const router = createBrowserRouter([
     action: registerAction,
   },
   {
-    path: ":id/favorites",
+    path: ":userID/favorites",
     element: (
       <ProtectedRoute>
         <FavoritePage />
@@ -53,9 +53,7 @@ ReactDOM.createRoot(document.getElementById("root")).render(
         <FavoriteListsContextProvider>
           <FavoriteWordsContextProvider>
             <DictionaryContentProvider>
-
               <RouterProvider router={router} />
-
             </DictionaryContentProvider>
           </FavoriteWordsContextProvider>
         </FavoriteListsContextProvider>
